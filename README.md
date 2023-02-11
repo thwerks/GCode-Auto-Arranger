@@ -43,4 +43,4 @@ The program analyzes your part and determines how many can fit on your bed and t
 
 
 
-**This is a work in progress so if anyone has a question, create an "issue" here in get hub and send your GCode and or screen shot so I can try to fix it. Im open to suggestions**
+**This is a work in progress so if anyone has a question, create an "issue" here in github and send your GCode and 3mf project file so I can try to fix it. Im also open to suggestions**
