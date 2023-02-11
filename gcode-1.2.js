@@ -7,6 +7,8 @@ let clearanceY = 28;    //set clearance from nozzle to fan shroud in the Y axis
 let clearanceS = 2;     //set clearance between skirts (if part maxZ is below carriageX)
 let partStartX = 1;     //set begenning point for part alignment X (probably just leave to 5mm)
 let partStartY = 1;     //set begenning point for part alignment Y (probably just leave to 5mm)
+let partRetraction = 6;             // in between part retraction length in mm
+let partRetractionSpeed = 1500;     // retraction speed in mm/min
 //---------------------------------------------------------------------------------------------------
 const fs = require('fs')
 let buf = "";
@@ -260,7 +262,7 @@ function partCode(num, addX, addY, numX, numY) {
                     buf += "\nG1 Z3";
                     buf += "\nG90";
                     buf += "\nG92 E0";
-                    buf += "\nG1 E-10 F2400";
+                    buf += "\nG1 E-" + partRetraction + " F" + partRetractionSpeed;
                     buf += "\nM83";
                     if (sys.partVertical == true) {
                         buf += "\nG1 X" + String((Number(partStart.x) + Number(addX)).toFixed(3));
@@ -274,7 +276,7 @@ function partCode(num, addX, addY, numX, numY) {
                     buf += "\n" + gcode[0].tempBedWait;
                     buf += "\n" + gcode[0].tempExtruderWait;
                     buf += "\nM300 S1000 P200";
-                    buf += "\nG1 E12 F2400";
+                    buf += "\nG1 E12 F" + partRetractionSpeed;
                     //  console.log(buf)
                     partStartFound = true;
                     // console.log("setting jump location")
