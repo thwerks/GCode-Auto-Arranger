@@ -34,6 +34,7 @@ The program analyzes your part and determines how many can fit on your bed and t
 ### Additional Part Feature
 * You can specify one addional part to be printed virtically or horizontally by using -h or -v followed by path to gcode file
 * The purpose for that is to fit one more part on the bed that would otherwise not fit had it not been in an opposing orientation
+* Example: node /path/to/gcode.js /path/to/your/part.gcode -v /path/to/your/part-virtical.gcode
 
 ## Execution:
 * All you need to do is download NodeJS for Windows or Linux.
