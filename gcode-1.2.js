@@ -54,7 +54,7 @@ function partAnalyze(num) {
         }
         if (gcode[num].source[x] == ';TYPE:Skirt/Brim'      // find start of skirt
             || gcode[num].source[x] == ';TYPE:Skirt') {
-            line[num].skirtStart = x;  
+            line[num].skirtStart = x;
         }
         if (line[num].skirtEnd == false && x > line[num].skirtStart + 2) {    // use skirt to find part length and width
             buf = parseNum(gcode[num].source[x], "X", ' ');   // find part width
@@ -64,20 +64,25 @@ function partAnalyze(num) {
             if (buf != undefined && buf > part[num].maxY) part[num].maxY = buf;
             if (buf != undefined && buf < part[num].minY) part[num].minY = buf;
         }
-        if (gcode[num].tempBed == undefined && gcode[num].source[x].startsWith('M140') == true) gcode[num].tempBed = gcode[num].source[x];  // record bed temp
-        if (gcode[num].tempExtruder == undefined && gcode[num].source[x].startsWith('M104') == true) gcode[num].tempExtruder = gcode[num].source[x]; // record extruder temp
-        if (gcode[num].tempBedWait == undefined && gcode[num].source[x].startsWith('M190') == true) gcode[num].tempBedWait = gcode[num].source[x];
-        if (gcode[num].tempExtruderWait == undefined && gcode[num].source[x].startsWith('M109') == true) gcode[num].tempExtruderWait = gcode[num].source[x];
-        if (line[num].partEnd == undefined && line[num].partStart != undefined && gcode[num].source[x] == ";TYPE:Custom") line[num].partEnd = x;  // find part end line
-        if (gcode[num].source[x].startsWith("G21") == true) line[num].partStart = x;      // find part start line "G21"
-        if (line[num].partStart == undefined) (gcode[num].start).push(gcode[num].source[x]);     // copy start gcode to mem
+        if (gcode[num].tempBed == undefined && gcode[num].source[x].startsWith('M140') == true)         // record bed temp
+            gcode[num].tempBed = gcode[num].source[x];  
+        if (gcode[num].tempExtruder == undefined && gcode[num].source[x].startsWith('M104') == true)    // record extruder temp
+            gcode[num].tempExtruder = gcode[num].source[x]; 
+        if (gcode[num].tempBedWait == undefined && gcode[num].source[x].startsWith('M190') == true)
+            gcode[num].tempBedWait = gcode[num].source[x];
+        if (gcode[num].tempExtruderWait == undefined && gcode[num].source[x].startsWith('M109') == true)
+            gcode[num].tempExtruderWait = gcode[num].source[x];
+        if (line[num].partEnd == undefined && line[num].partStart != undefined && gcode[num].source[x] == ";TYPE:Custom") // find part end line
+            line[num].partEnd = x;  
+        if (gcode[num].source[x].startsWith("G21") == true) line[num].partStart = x;            // find part start line "G21"
+        if (line[num].partStart == undefined) (gcode[num].start).push(gcode[num].source[x]);    // copy start gcode to mem
         if (line[num].partStart != undefined && line[num].partEnd == undefined) {
             buf = parseNum(gcode[num].source[x], "Z", ' ');               // parse line if Z move (for purpose of finding z max height)
-            if (buf != undefined && buf > part[num].maxZ) part[num].maxZ = buf;  // find max Z in part gcode
-            (gcode[num].part).push(gcode[num].source[x]);                                     // copy part gcode to mem
+            if (buf != undefined && buf > part[num].maxZ) part[num].maxZ = buf;                 // find max Z in part gcode
+            (gcode[num].part).push(gcode[num].source[x]);                                       // copy part gcode to mem
             line[num].partTotal++;
         }
-        if (line[num].partEnd != undefined) gcode[num].end.push(gcode[num].source[x])          // copy end gcode to mem 
+        if (line[num].partEnd != undefined) gcode[num].end.push(gcode[num].source[x])           // copy end gcode to mem 
     }
 }
 function partSize(num, orientation) {
