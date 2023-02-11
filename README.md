@@ -1,10 +1,10 @@
 # GCode-Auto-Arranger
 
-I think PrusaSlicer is incredibly good, has excellent liner advance among other outstanding features. But, after 4 years of people complaining about the completely obnoxious manner PrusaSlicer handles multi-part Brims and Skirts, enough waiting.
+This utility has two main goals; firstly to automatically arrange parts on the bed and secondly to ensure brims and skirts are printed at the time of subsequent parts. Contrastingly, Prusa Slicer prints the brims for all parts first, then individually prints the parts.
 
-This program wont help people who want to have different parts on one bed (although I could if anyone is interested) but for those who are printing multiple instances of the same part, I've devised a fix for you.
+This program wont help people who want to have different parts on one bed (although I could if anyone is interested) but for those who are printing multiple instances of the same part, this utility is for you.
 
-Attached is a NodeJS program that will take a single part GCode file and replicate it. It's still work in progress but for the most part it should work fine. The program analyzes your part and determines how many can fit on your bed and then replicates the GCode, keeping the start and end GCode as normal, only replicating the part GCode. The X gantry height is taken into consideration and the program employs a different strategy if a potential collision is possible.
+This utility will take a single part GCode file and replicate it. It's still work in progress but for the most part it should work fine. The program analyzes your part and determines how many can fit on your bed and then replicates the GCode, keeping the start and end GCode as normal, only replicating the part GCode. The X gantry height is taken into consideration and the program employs a different strategy if a potential collision is possible.
 
 How to Use:
 
@@ -27,8 +27,7 @@ If parts are large rectangles, Triangle Mode activates and the program attempts 
 You can specify the X, Y starting offset. Default is X5mm Y5mm
 This is a work in progress so if anyone has an issue, send me a picture of what its doing and your GCode so I can try to fix it.
 Open to suggestions
-gcode3.TXT
 
 All you need to do is download NodeJS for Windows or Linux.
-Its was written in NodeJS 14 and possibly might not work in NodeJS 10 but I'm not completely sure
+It was written in NodeJS 14 and possibly might not work in NodeJS 10 but I'm not completely sure
 You need to edit the first 5 lines with dimensions that match your printer, its currently set for an Ender 3
