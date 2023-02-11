@@ -42,18 +42,20 @@ partAnalyze(0);       // gather data and parse
 partSize(0);          // quantify data
 partMoveOrigin(0);      // move part to origin coordinates
 checkArgs();          // check arguments - check for additional horizontal or virtical part
-partDuplicate();      // creat iterations of part
+partDuplicate();      // create iterations of part
 function partAnalyze(num) {
     for (let x = 0; x < gcode[num].source.length; x++) {  // interate every line of gcode data
         if (line[num].skirtEnd == false) {  // find end of the skirt - look for various start conditions
-            if (gcode[num].source[x].startsWith('; printing object') == true ||
-                gcode[num].source[x] == (';TYPE:Perimeter') ||
-                gcode[num].source[x] == (';TYPE:External perimeter')
-            ) {
+            if (gcode[num].source[x].startsWith('; printing object') == true
+                || gcode[num].source[x] == ';TYPE:Perimeter'
+                || gcode[num].source[x] == ';TYPE:External perimeter') {
                 line[num].skirtEnd = true;
             }
         }
-        if (gcode[num].source[x] == ';TYPE:Skirt/Brim' || gcode[num].source[x] == ';TYPE:Skirt') line[num].skirtStart = x;  // find start of skirt
+        if (gcode[num].source[x] == ';TYPE:Skirt/Brim'      // find start of skirt
+            || gcode[num].source[x] == ';TYPE:Skirt') {
+            line[num].skirtStart = x;  
+        }
         if (line[num].skirtEnd == false && x > line[num].skirtStart + 2) {    // use skirt to find part length and width
             buf = parseNum(gcode[num].source[x], "X", ' ');   // find part width
             if (buf != undefined && buf > part[num].maxX) part[num].maxX = buf;
