@@ -13,13 +13,13 @@ The program analyzes your part and determines how many can fit on your bed and t
 
 * It separates the beginning, actual part and ending GCode
 * It determines the maximum amount of parts that will fit on your bed size (which you specify)
-* Part GCode is ripped out and modified, so you'r free to use any brim, skirt settings you want for an individual part.
+* Part GCode is ripped out and modified, so you'r free to use any brim, skirt settings you want for an individual part
 * Modifies GCode to perform an Y/X move before Z moves when moving to print next part
 * Reheats and waits for bed/extruder start temps each time new part begins
 * It arranges the print order, starting in front left of the bed, moving to the right and back to the next row
 * It uses carriage dimensions (which you specify) to know how much space to put between each part
 * It use X gantry height (which you specify) to switch to a different strategy to avoid X gantry collisions
-* If parts are large rectangles, Triangle Mode activates and the program attempts to arrange 3 parts in a bottom left, top center, bottom right arrangement or top left, center right, bottom left arrangement depending on rectangle orientation.
+* If parts are large rectangles, Triangle Mode activates and the program attempts to arrange 3 parts in a bottom left, top center, bottom right arrangement or top left, center right, bottom left arrangement depending on rectangle orientation
 * You can specify the X, Y starting offset. Default is X5mm Y5mm
 
 
@@ -31,6 +31,9 @@ The program analyzes your part and determines how many can fit on your bed and t
 * A new file is created with the same name and inside same directory, appended with "new"
 * Use PrusaSlicer GCode viewer to confirm results are satisfactory
 
+### Additional Part Feature
+* You can specify one addional part to be printed virtically or horizontally by using -h or -v followed by path to gcode file
+* The purpose for that is to fit one more part on the bed that would otherwise not fit had it not been in an opposing orientation
 
 ## Execution:
 * All you need to do is download NodeJS for Windows or Linux.
