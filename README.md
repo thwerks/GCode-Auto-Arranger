@@ -6,7 +6,7 @@ This program wont help people who want to have different parts on one bed (altho
 
 This utility will take a single part GCode file and replicate it. It's still work in progress but for the most part it should work fine. The program analyzes your part and determines how many can fit on your bed and then replicates the GCode, keeping the start and end GCode as normal, only replicating the part GCode. The X gantry height is taken into consideration and the program employs a different strategy if a potential collision is possible.
 
-How to Use:
+### How to Use:
 
 Enable "Label Objects" in PrusaSlicer in Print Settings / Output Options
 Use PrusaSlicer and put a single part on the bed and export GCode using control+g
