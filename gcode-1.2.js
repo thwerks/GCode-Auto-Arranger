@@ -32,7 +32,7 @@ let sys = {
     }
 }
 sys.makePart();
-let file = process.argv[2].split(".");
+let file = process.argv[2].split(/\.(?=[^\.]+$)/);  // thanks @cmdlinebeep for this fix for filenames contaning more than one period
 console.log("Loading gcode into memory...");
 buf = fs.readFileSync(process.argv[2], { encoding: 'utf8', flag: 'r' });
 console.log("staging gcode...");
