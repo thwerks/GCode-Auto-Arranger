@@ -4,7 +4,7 @@ This utility has two main goals; firstly to automatically arrange parts on the b
 
 This program wont help people who want to have different parts on one bed (although I could if anyone is interested) but for those who are printing multiple instances of the same part, this utility is for you.
 
-This utility will take a single part GCode file and replicate it. It's still work in progress though.
+This utility will take a single part GCode file and replicate it. It's still a work in progress though.
 
 The program analyzes your part and determines how many can fit on your bed and then replicates the GCode, keeping the start and end GCode as normal, only replicating the part GCode. The X gantry height is taken into consideration and the program employs a different strategy if a potential collision is possible.
 
