@@ -1,10 +1,10 @@
 let bedX = 230;         //set bed X dimension
 let bedY = 230;         //set bed Y dimension
-let gantryX = 32;       //set X gantry height
-let carriageX = 7;      //set clearance of the X carriage
+let gantryX = 32;       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest position)
 let clearanceX = 31;    //set clearance from nozzle to fan shroud in the X axis
 let clearanceY = 28;    //set clearance from nozzle to fan shroud in the Y axis
-let clearanceS = 2;     //set clearance between skirts (if part maxZ is below carriageX)
+let clearanceZ = 7;     //set clearance from the bed to the next obstruction on the carriage, usually the heatbreak or fan duct/shroud  
+let clearanceS = 2;     //set clearance between skirts (if part maxZ is below clearanceZ)
 let partStartX = 1;     //set begenning point for part alignment X (probably just leave to 5mm)
 let partStartY = 1;     //set begenning point for part alignment Y (probably just leave to 5mm)
 let partRetraction = 6;             // in between part retraction length in mm
@@ -90,7 +90,7 @@ function partSize(num, orientation) {
         part[num].sizeX = part[num].maxX - part[num].minX;
         part[num].sizeY = part[num].maxY - part[num].minY;
         console.log('Vertical part is: ' + '(x)' + part[num].sizeX.toFixed(2) + 'mm  -  (y)' + part[num].sizeY.toFixed(2) + "mm  -  (z)" + part[num].maxZ + "mm");
-        if (part[num].maxZ <= carriageX) {
+        if (part[num].maxZ <= clearanceZ) {
             console.log(color("green", "Part is lower than carriage", 0));
             part[num].flat = true;
             part[num].partsMaxX = Math.floor(bedX / part[num].sizeX);
@@ -105,7 +105,7 @@ function partSize(num, orientation) {
         part[num].sizeX = part[num].maxX - part[num].minX;
         part[num].sizeY = part[num].maxY - part[num].minY;
         console.log('Part is: ' + '(x)' + part[num].sizeX.toFixed(2) + 'mm  -  (y)' + part[num].sizeY.toFixed(2) + "mm  -  (z)" + part[num].maxZ + "mm");
-        if (part[num].maxZ <= carriageX) {
+        if (part[num].maxZ <= clearanceZ) {
             console.log(color("green", "Part is lower than carriage", 0));
             part[num].flat = true;
             part[num].partsMaxX = Math.floor(bedX / part[num].sizeX);
