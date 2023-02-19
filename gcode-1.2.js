@@ -32,7 +32,7 @@ let sys = {
     }
 }
 sys.makePart();
-let file = process.argv[2].split(/\.(?=[^\.]+$)/);  // thanks @cmdlinebeep for this fix for filenames contaning more than one period
+let file = process.argv[2].split(/\.(?=[^\.]+$)/);
 console.log("Loading gcode into memory...");
 buf = fs.readFileSync(process.argv[2], { encoding: 'utf8', flag: 'r' });
 console.log("staging gcode...");
@@ -65,15 +65,15 @@ function partAnalyze(num) {
             if (buf != undefined && buf < part[num].minY) part[num].minY = buf;
         }
         if (gcode[num].tempBed == undefined && gcode[num].source[x].startsWith('M140') == true)         // record bed temp
-            gcode[num].tempBed = gcode[num].source[x];  
+            gcode[num].tempBed = gcode[num].source[x];
         if (gcode[num].tempExtruder == undefined && gcode[num].source[x].startsWith('M104') == true)    // record extruder temp
-            gcode[num].tempExtruder = gcode[num].source[x]; 
+            gcode[num].tempExtruder = gcode[num].source[x];
         if (gcode[num].tempBedWait == undefined && gcode[num].source[x].startsWith('M190') == true)
             gcode[num].tempBedWait = gcode[num].source[x];
         if (gcode[num].tempExtruderWait == undefined && gcode[num].source[x].startsWith('M109') == true)
             gcode[num].tempExtruderWait = gcode[num].source[x];
         if (line[num].partEnd == undefined && line[num].partStart != undefined && gcode[num].source[x] == ";TYPE:Custom") // find part end line
-            line[num].partEnd = x;  
+            line[num].partEnd = x;
         if (gcode[num].source[x].startsWith("G21") == true) line[num].partStart = x;            // find part start line "G21"
         if (line[num].partStart == undefined) (gcode[num].start).push(gcode[num].source[x]);    // copy start gcode to mem
         if (line[num].partStart != undefined && line[num].partEnd == undefined) {
@@ -123,7 +123,10 @@ function partSize(num, orientation) {
             if (part[num].maxZ >= gantryX) {
                 console.log(color("yellow", 'Part is taller than gantry - switching to ZigZag placement', 0));
                 part[num].zigZag = true;
-                part[num].partsMaxY = Math.floor((bedY + clearanceY) / (part[num].sizeY));
+                if (part[num].sizeY <= clearanceY)
+                    part[num].partsMaxY = Math.floor((bedY + clearanceY) / (part[num].sizeY));
+                else
+                    part[num].partsMaxY = Math.floor((bedY + clearanceY) / ((part[num].sizeY + clearanceY) / 2) -1);
                 console.log("Can fit " + color("green", true, 0) + part[num].partsMaxY + " in Zigzag mode" + color("green", false));
             } else {
                 console.log("Can fit " + color("green", part[num].partsMaxX, 0) + " in a row");
@@ -236,12 +239,14 @@ function partDuplicate() {
             console.log("Creating part at Y(row) " + part[0].posY.toFixed(3));
             if (positionLeft == true) {
                 partCode(0, (bedX / 2) - (part[0].sizeX / 2) - (part[0].sizeX), part[0].posY, 0, y);
+                part[0].posY += (clearanceY);
                 positionLeft = false;
             } else {
                 partCode(0, (bedX / 2) - (part[0].sizeX / 2) + (part[0].sizeX), part[0].posY, 0, y);
+                part[0].posY += (part[0].sizeY);
                 positionLeft = true;
             }
-            part[0].posY += (clearanceY);
+
         }
     }
     gcode[0].end.forEach((data) => buf += data + "\n");
