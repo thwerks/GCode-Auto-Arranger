@@ -36,10 +36,10 @@ The program analyzes your part and determines how many can fit on your bed and t
 * The purpose for that is to fit one more part on the bed that would otherwise not fit had it not been in an opposing orientation
 * **Example:** node /path/to/gcode.js /path/to/your/part.gcode -v /path/to/your/part-virtical.gcode
 
-## Execution:
+# Execution:
 * All you need to do is download NodeJS for Windows or Linux.
 * It was written in NodeJS 14 and possibly might not work in NodeJS 10 but I'm not completely sure
-* **You need to edit the first 5 lines with dimensions that match your printer**, its currently set for an Ender 3
+* **You need to edit the first sectio of variables with dimensions that match your printer**, its currently set for an Ender 3
 
 
 
