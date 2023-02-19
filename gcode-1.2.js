@@ -1,13 +1,13 @@
 let bedX = 230;         //set bed X dimension
 let bedY = 230;         //set bed Y dimension
-let gantryX = 32;       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest position)
+let gantryX = 32;       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest printing position)
 let clearanceX = 31;    //set clearance from nozzle to fan shroud in the X axis
 let clearanceY = 28;    //set clearance from nozzle to fan shroud in the Y axis
 let clearanceZ = 7;     //set clearance from the bed to the next obstruction on the carriage, usually the heatbreak or fan duct/shroud  
 let clearanceS = 2;     //set clearance between skirts (if part maxZ is below clearanceZ)
 let partStartX = 1;     //set begenning point for part alignment X (probably just leave to 5mm)
 let partStartY = 1;     //set begenning point for part alignment Y (probably just leave to 5mm)
-let partRetraction = 6;             // in between part retraction length in mm
+let partRetraction = 6;             // in-between part retraction length in mm
 let partRetractionSpeed = 1500;     // retraction speed in mm/min
 //---------------------------------------------------------------------------------------------------
 const fs = require('fs')
