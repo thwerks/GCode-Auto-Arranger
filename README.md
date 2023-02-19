@@ -1,4 +1,4 @@
-# GCode-Auto-Arranger
+# GCode Auto Arranger
 
 This utility has two main goals; firstly to automatically arrange parts on the bed and secondly to ensure brims and skirts are printed at the time of subsequent parts. Contrastingly, Prusa Slicer prints the brims for all parts first, then individually prints the parts.
 
