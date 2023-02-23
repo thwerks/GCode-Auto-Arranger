@@ -123,6 +123,7 @@ function partSize(num, orientation) {
             if (part[num].maxZ >= gantryX) {
                 console.log(color("yellow", 'Part is taller than gantry - switching to ZigZag placement', 0));
                 part[num].zigZag = true;
+                part[num].partsMaxY = 0;
                 let x = 0;
                 let z = false;
                 while (x < (bedY + clearanceY)) {
