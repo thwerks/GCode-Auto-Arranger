@@ -55,14 +55,14 @@ time.seconds = (time.diff / 1000 % 60);
 console.log(color("blue", "Done!") + " in " + color("blue", time.seconds) + " seconds.");
 function partAnalyze(num) {
     for (let x = 0; x < gcode[num].source.length; x++) {  // interate every line of gcode data
-        if (line[num].skirtEnd == false) {  // find end of the skirt - look for various start conditions
+        if (line[num].skirtEnd == false) {  // find end of the skirt - look for various end conditions
             if (gcode[num].source[x].startsWith('; printing object') == true
                 || gcode[num].source[x] == ';TYPE:Perimeter'
                 || gcode[num].source[x] == ';TYPE:External perimeter') {
                 line[num].skirtEnd = true;
             }
         }
-        if (gcode[num].source[x] == ';TYPE:Skirt/Brim'      // find start of skirt
+        if (gcode[num].source[x] == ';TYPE:Skirt/Brim'      // find start of skirt - look for various start conditions
             || gcode[num].source[x] == ';TYPE:Skirt') {
             line[num].skirtStart = x;
         }
