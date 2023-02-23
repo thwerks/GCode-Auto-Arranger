@@ -1,25 +1,30 @@
-let bedX = 230;         //set bed X dimension
-let bedY = 230;         //set bed Y dimension
-let gantryX = 32;       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest printing position)
-let clearanceX = 31;    //set clearance from nozzle to fan shroud in the X axis (left or right side, whichever is greater)
-let clearanceY = 28;    //set clearance from nozzle to fan shroud in the Y axis (only the distance from nozzle to front of fan shroud matters)
-let clearanceZ = 7;     //set clearance from the bed to the next obstruction on the carriage, usually the heatbreak or fan duct/shroud  
-let clearanceS = 2;     //set clearance between skirts/brims (if part maxZ is below clearanceZ)
-let partStartX = 1;     //set begenning point for part alignment X (probably just leave to 5mm)
-let partStartY = 1;     //set begenning point for part alignment Y (probably just leave to 5mm)
-let partRetraction = 6;             // in-between part retraction length in mm
-let partRetractionSpeed = 1500;     // retraction speed in mm/min
+let
+    bedX = 230,         //set bed X dimension
+    bedY = 230,         //set bed Y dimension
+    gantryX = 32,       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest printing position)
+    clearanceX = 31,    //set clearance from nozzle to fan shroud in the X axis (left or right side, whichever is greater)
+    clearanceY = 28,    //set clearance from nozzle to fan shroud in the Y axis (only the distance from nozzle to front of fan shroud matters)
+    clearanceZ = 7,     //set clearance from the bed to the next obstruction on the carriage, usually the heatbreak or fan duct/shroud  
+    clearanceS = 2,     //set clearance between skirts/brims (if part maxZ is below clearanceZ)
+    partStartX = 1,     //set begenning point for part alignment X (probably just leave to 5mm)
+    partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
+    partRetraction = 6,             // in-between part retraction length in mm
+    partRetractionSpeed = 1500      // retraction speed in mm/min
+    ;
 //---------------------------------------------------------------------------------------------------
 const fs = require('fs')
-let buf = "";
-let line = [];
-let part = [];
-let gcode = [];
+let
+    buf = "",
+    line = [],
+    part = [],
+    gcode = [],
+    time = { start: new Date().getTime(), end: undefined, seconds: 0, diff: 0 }
+    ;
 let sys = {
     partVertical: false,
     partHorizontal: false,
     argPosision: undefined,
-    makePart: function () {
+    makePart: function () {     // object constructor 
         part.push({
             posX: 0, posY: 0, partsMaxX: 0, partsMaxY: 0, part: 0, maxZ: 0, maxX: 0, minX: 1024, maxY: 0,
             minY: 1024, sizeX: 0, sizeY: 0, zigZag: false, triTop: false, triSide: false, flat: false
@@ -28,12 +33,14 @@ let sys = {
             start: [], part: [], partMoved: [], end: [], source: [], tempBed: undefined,
             tempExtruder: undefined, tempBedWait: undefined, tempExtruderWait: undefined
         });
-        line.push({ skirtStart: undefined, skirtEnd: false, partStart: undefined, partEnd: undefined, partTotal: 0, })
+        line.push({ skirtStart: undefined, skirtEnd: false, partStart: undefined, partEnd: undefined, partTotal: 0 })
     }
 }
-sys.makePart();
-let file = process.argv[2].split(/\.(?=[^\.]+$)/);
-console.log("Loading gcode into memory...");
+const start =
+
+    sys.makePart();
+let fileName = process.argv[2].split(/\.(?=[^\.]+$)/);
+console.log("Buffering gcode...");
 buf = fs.readFileSync(process.argv[2], { encoding: 'utf8', flag: 'r' });
 console.log("Staging gcode...");
 gcode[0].source = buf.toString().split("\n")  //  stage gcode in a line split string array
@@ -43,6 +50,10 @@ partSize(0);          // quantify data
 partMoveOrigin(0);      // move part to origin coordinates
 checkArgs();          // check arguments - check for additional horizontal or virtical part
 partDuplicate();      // create iterations of part
+time.end = new Date().getTime();
+time.diff = time.end - time.start;
+time.seconds = (time.diff / 1000 % 60);
+console.log(color("blue", "Done!") + " in " + color("blue", time.seconds) + " seconds.");
 function partAnalyze(num) {
     for (let x = 0; x < gcode[num].source.length; x++) {  // interate every line of gcode data
         if (line[num].skirtEnd == false) {  // find end of the skirt - look for various start conditions
@@ -86,12 +97,12 @@ function partAnalyze(num) {
     }
 }
 function partSize(num, orientation) {
-    if (orientation == "vertical" || orientation == "horizontal") {
+    if (orientation == "vertical" || orientation == "horizontal") {   // for v/h additional part
         part[num].sizeX = part[num].maxX - part[num].minX;
         part[num].sizeY = part[num].maxY - part[num].minY;
         console.log('Vertical part is: ' + '(x)' + part[num].sizeX.toFixed(2) + 'mm  -  (y)' + part[num].sizeY.toFixed(2) + "mm  -  (z)" + part[num].maxZ + "mm");
         if (part[num].maxZ <= clearanceZ) {
-            console.log(color("green", "Part is lower than carriage", 0));
+            console.log(color("green", "Part is lower than carriage"));
             part[num].flat = true;
             part[num].partsMaxX = Math.floor(bedX / part[num].sizeX);
             part[num].partsMaxY = Math.floor(bedY / part[num].sizeY);
@@ -99,29 +110,31 @@ function partSize(num, orientation) {
             part[num].partsMaxX = Math.floor((bedX + clearanceX) / (part[num].sizeX + clearanceX));
             part[num].partsMaxY = Math.floor((bedY + clearanceY) / (part[num].sizeY + clearanceY));
         }
-        if (orientation == "vertical") console.log("Can fit " + color("green", part[num].partsMaxY, 0) + " vertical parts");
-        else console.log("Can fit " + color("green", part[num].partsMaxX, 0) + " horizontal parts");
+        if (orientation == "vertical") console.log("Can fit " + color("green", part[num].partsMaxY) + " vertical parts");
+        else console.log("Can fit " + color("green", part[num].partsMaxX) + " horizontal parts");
     } else {
         part[num].sizeX = part[num].maxX - part[num].minX;
         part[num].sizeY = part[num].maxY - part[num].minY;
         console.log('Part is: ' + '(x)' + part[num].sizeX.toFixed(2) + 'mm  -  (y)' + part[num].sizeY.toFixed(2) + "mm  -  (z)" + part[num].maxZ + "mm");
-        if (part[num].maxZ <= clearanceZ) {
-            console.log(color("green", "Part is lower than carriage", 0));
+        if (part[num].maxZ <= clearanceZ) {                                                          // very low profile part
+            console.log(color("green", "Part is lower than carriage"));
             part[num].flat = true;
             part[num].partsMaxX = Math.floor(bedX / part[num].sizeX);
             part[num].partsMaxY = Math.floor(bedY / part[num].sizeY);
-        } else {
+        } else {                                                                                    // standard part placement
             part[num].partsMaxX = Math.floor((bedX + clearanceX) / (part[num].sizeX + clearanceX));
             part[num].partsMaxY = Math.floor((bedY + clearanceY) / (part[num].sizeY + clearanceY));
         }
-        if (part[num].partsMaxX == 2 && part[num].partsMaxY == 1 || part[num].partsMaxX == 1 && part[num].partsMaxY == 2) {
+        if (part[num].partsMaxX == 2 && part[num].partsMaxY == 1 || part[num].partsMaxX == 1 && part[num].partsMaxY == 2) {  // triangle arrangement
             if (part[num].maxZ < gantryX) {
                 if ((part[num].sizeX * 2) + clearanceX <= bedX) part[num].triTop = true;
                 else if ((part[num].sizeY * 2) + clearanceY <= bedY) part[num].triSide = true;
-            } else if (part[num].maxZ >= gantryX && (part[num].sizeY * 2) + clearanceY <= bedY) part[num].triSide = true
+            }
+            else if (part[num].maxZ >= gantryX && (part[num].sizeY * 2) + clearanceY <= bedY) part[num].triSide = true;
+            console.log(color("yellow", "Arranging parts into triangle mode"));
         } else {
-            if (part[num].maxZ >= gantryX) {
-                console.log(color("yellow", 'Part is taller than gantry - switching to ZigZag placement', 0));
+            if (part[num].maxZ >= gantryX) {                                                                   // zigzag arrangement 
+                console.log(color("yellow", "Part is taller than gantry ") + "- switching to ZigZag placement");
                 part[num].zigZag = true;
                 part[num].partsMaxY = 0;
                 let x = 0;
@@ -132,13 +145,13 @@ function partSize(num, orientation) {
                     else z = false;
                     part[num].partsMaxY++;
                 }
-                console.log("Can fit " + color("green", true, 0) + part[num].partsMaxY + " in Zigzag mode" + color("green", false));
+                console.log("Total is " + color("green", part[num].partsMaxY) + " in " + color("green", "Zigzag") + " mode");
             } else {
-                console.log("Can fit " + color("green", part[num].partsMaxX, 0) + " in a row");
-                console.log("Can have " + color("green", part[num].partsMaxY, 0) + " rows");
+                console.log("Can fit " + color("green", part[num].partsMaxX) + " in a row");
+                console.log("Can have " + color("green", part[num].partsMaxY) + " rows");
+                console.log("Total is " + color("green", part[num].partsMaxY * part[num].partsMaxX) + " parts");
             }
         }
-        if (part[num].triTop == true || part[num].triSide == true) console.log(color("yellow", "Arranging parts into triangle mode"));
         console.log("Start G-Code is " + gcode[num].start.length + " lines");
         console.log("Part G-Code is " + line[num].partTotal + " lines");
         console.log("End G-Code is " + gcode[num].end.length + " lines");
@@ -225,14 +238,14 @@ function partDuplicate() {
         } else {                                              // triangle arrangement
             if (part[0].triTop == true) {
                 console.log("Creating part in bottom left");
-                partCode(0, 0, 0, 0, 0);
+                partCode(0, 0, 0, 0);
                 console.log("Creating part in bottom right");
-                partCode(0, bedX - part[0].sizeX - (partStartX * 2), 0);
+                partCode(0, bedX - part[0].sizeX - (partStartX * 2));
                 console.log("Creating part in top center");
                 partCode(0, (bedX / 2) - (part[0].sizeX / 2) - partStartX, bedY - part[0].sizeY - (partStartY * 2));
             } else {
                 console.log("Creating part in bottom left");
-                partCode(0, 0, 0, 0, 0);
+                partCode(0, 0, 0, 0);
                 console.log("Creating part in right center");
                 partCode(0, bedX - part[0].sizeX - (partStartX * 2), (bedY / 2) - (part[0].sizeY / 2) - partStartY);
                 console.log("Creating part in top left");
@@ -256,7 +269,6 @@ function partDuplicate() {
     }
     gcode[0].end.forEach((data) => buf += data + "\n");
     fileWriteOver(buf);
-    console.log(color("blue", "Done!", 0));
 }
 function partCode(num, addX, addY, numX, numY) {
     let partStart = {};
@@ -317,7 +329,7 @@ function checkArgs() {
             console.log("Loading vertical part G Code into memory...");
             buf = fs.readFileSync(process.argv[sys.argPosision], { encoding: 'utf8', flag: 'r' });
             gcode[1].source = buf.toString().split("\n")
-            console.log(color("green", "Analyzing vertical part...", 0));
+            console.log(color("green", "Analyzing vertical part..."));
             partAnalyze(1);
             partSize(1, "vertical");
             sys.partVertical = true;
@@ -330,7 +342,7 @@ function checkArgs() {
             console.log("Loading horizontal part G Code into memory...");
             buf = fs.readFileSync(process.argv[sys.argPosision], { encoding: 'utf8', flag: 'r' });
             gcode[1].source = buf.toString().split("\n")
-            console.log(color("green", "Analyzing horizontal part...", 0));
+            console.log(color("green", "Analyzing horizontal part..."));
             partAnalyze(1);
             partSize(1, "horizontal");
             sys.partHorizontal = true;
@@ -365,9 +377,9 @@ function color(color, input, ...option) {   //  ascii color function for termina
     if (input == undefined) input = '';
     let c;
     let op = ""
-    let bold = 'm';
+    let bold = ';1m';
     for (let x = 0; x < option.length; x++) {
-        if (option[x] == 0) bold = ';1m';       // bold
+        if (option[x] == 0) bold = 'm';       // bold
         if (option[x] == 1) op = '\x1b[5m';     // blink
         if (option[x] == 2) op = '\u001b[4m';   // underline
     }
@@ -386,10 +398,10 @@ function color(color, input, ...option) {   //  ascii color function for termina
 }
 function fileWriteOver(data) {
     try {
-        fs.unlinkSync(file[0] + " (full bed)." + file[1]);
-        console.log(color("yellow", "File alredy exists, overwriting data", 0));
+        fs.unlinkSync(fileName[0] + " (full bed)." + fileName[1]);
+        console.log(color("yellow", "File alredy exists, overwriting data"));
     } catch (error) {
-        console.log(color("green", "Creating New File - Writing Data", 0));
+        console.log(color("green", "Creating New File - Writing Data"));
     }
-    fs.appendFileSync(file[0] + " (full bed)." + file[1], data + "\n",);
+    fs.appendFileSync(fileName[0] + " (full bed)." + fileName[1], data + "\n",);
 }
