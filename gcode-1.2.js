@@ -36,9 +36,8 @@ let sys = {
         line.push({ skirtStart: undefined, skirtEnd: false, partStart: undefined, partEnd: undefined, partTotal: 0 })
     }
 }
-const start =
 
-    sys.makePart();
+sys.makePart();
 let fileName = process.argv[2].split(/\.(?=[^\.]+$)/);
 console.log("Buffering gcode...");
 buf = fs.readFileSync(process.argv[2], { encoding: 'utf8', flag: 'r' });
