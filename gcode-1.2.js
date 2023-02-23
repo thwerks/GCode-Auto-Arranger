@@ -1,8 +1,8 @@
-let bedX = 230;         //set bed X dimension
+let bedX = 250;         //set bed X dimension
 let bedY = 230;         //set bed Y dimension
 let gantryX = 32;       //set X gantry height (distance from the bed to the underside of X Axis rail at its lowest printing position)
 let clearanceX = 31;    //set clearance from nozzle to fan shroud in the X axis
-let clearanceY = 28;    //set clearance from nozzle to fan shroud in the Y axis
+let clearanceY = 68;    //set clearance from nozzle to fan shroud in the Y axis
 let clearanceZ = 7;     //set clearance from the bed to the next obstruction on the carriage, usually the heatbreak or fan duct/shroud  
 let clearanceS = 2;     //set clearance between skirts (if part maxZ is below clearanceZ)
 let partStartX = 1;     //set begenning point for part alignment X (probably just leave to 5mm)
@@ -37,7 +37,7 @@ console.log("Loading gcode into memory...");
 buf = fs.readFileSync(process.argv[2], { encoding: 'utf8', flag: 'r' });
 console.log("staging gcode...");
 gcode[0].source = buf.toString().split("\n")  //  stage gcode in a line split string array
-console.log(color("green", "Analyzing part...", 0));
+console.log("Analyzing part...");
 partAnalyze(0);       // gather data and parse  
 partSize(0);          // quantify data
 partMoveOrigin(0);      // move part to origin coordinates
@@ -123,10 +123,14 @@ function partSize(num, orientation) {
             if (part[num].maxZ >= gantryX) {
                 console.log(color("yellow", 'Part is taller than gantry - switching to ZigZag placement', 0));
                 part[num].zigZag = true;
-                if (part[num].sizeY <= clearanceY)
-                    part[num].partsMaxY = Math.floor((bedY + clearanceY) / (part[num].sizeY));
-                else
-                    part[num].partsMaxY = Math.floor((bedY + clearanceY) / ((part[num].sizeY + clearanceY) / 2) -1);
+                let x = 0;
+                let z = false;
+                while (x < (bedY + clearanceY)) {
+                    x += part[num].sizeY;
+                    if (z == false) { x += clearanceY; z = true; }
+                    else z = false;
+                    part[num].partsMaxY++;
+                }
                 console.log("Can fit " + color("green", true, 0) + part[num].partsMaxY + " in Zigzag mode" + color("green", false));
             } else {
                 console.log("Can fit " + color("green", part[num].partsMaxX, 0) + " in a row");
