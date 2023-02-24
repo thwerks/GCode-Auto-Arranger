@@ -9,34 +9,28 @@ let
     partStartX = 1,     //set begenning point for part alignment X (probably just leave to 5mm)
     partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
     partRetraction = 6,             // in-between part retraction length in mm
-    partRetractionSpeed = 1500      // retraction speed in mm/min
-    ;
+    partRetractionSpeed = 1500;     // retraction speed in mm/min
 //---------------------------------------------------------------------------------------------------
 const fs = require('fs')
 let
-    buf = "",
-    line = [],
-    part = [],
-    gcode = [],
-    time = { start: new Date().getTime(), end: undefined, seconds: 0, diff: 0 }
-    ;
-let sys = {
-    partVertical: false,
-    partHorizontal: false,
-    argPosision: undefined,
-    makePart: function () {     // object constructor 
-        part.push({
-            posX: 0, posY: 0, partsMaxX: 0, partsMaxY: 0, part: 0, maxZ: 0, maxX: 0, minX: 1024, maxY: 0,
-            minY: 1024, sizeX: 0, sizeY: 0, zigZag: false, triTop: false, triSide: false, flat: false
-        });
-        gcode.push({
-            start: [], part: [], partMoved: [], end: [], source: [], tempBed: undefined,
-            tempExtruder: undefined, tempBedWait: undefined, tempExtruderWait: undefined
-        });
-        line.push({ skirtStart: undefined, skirtEnd: false, partStart: undefined, partEnd: undefined, partTotal: 0 })
-    }
-}
-
+    buf = "", line = [], part = [], gcode = [],
+    time = { start: new Date().getTime(), end: undefined, seconds: 0, diff: 0 },
+    sys = {
+        partVertical: false,
+        partHorizontal: false,
+        argPosision: undefined,
+        makePart: function () {     // object constructor 
+            part.push({
+                posX: 0, posY: 0, partsMaxX: 0, partsMaxY: 0, part: 0, maxZ: 0, maxX: 0, minX: 1024, maxY: 0,
+                minY: 1024, sizeX: 0, sizeY: 0, zigZag: false, triTop: false, triSide: false, flat: false
+            });
+            gcode.push({
+                start: [], part: [], partMoved: [], end: [], source: [], tempBed: undefined,
+                tempExtruder: undefined, tempBedWait: undefined, tempExtruderWait: undefined
+            });
+            line.push({ skirtStart: undefined, skirtEnd: false, partStart: undefined, partEnd: undefined, partTotal: 0 })
+        }
+    };
 sys.makePart();
 let fileName = process.argv[2].split(/\.(?=[^\.]+$)/);
 console.log("Buffering gcode...");
@@ -136,8 +130,7 @@ function partSize(num, orientation) {
                 console.log(color("yellow", "Part is taller than gantry ") + "- switching to ZigZag placement");
                 part[num].zigZag = true;
                 part[num].partsMaxY = 0;
-                let x = 0;
-                let z = false;
+                let x = 0, z = false;
                 while (x < (bedY + clearanceY)) {
                     x += part[num].sizeY;
                     if (z == false) { x += clearanceY; z = true; }
@@ -270,8 +263,7 @@ function partDuplicate() {
     fileWriteOver(buf);
 }
 function partCode(num, addX, addY, numX, numY) {
-    let partStart = {};
-    let partStartFound = false;
+    let partStart = {}, partStartFound = false;
     //console.log(buf)
     for (let x = 0; x < gcode[num].partMoved.length; x++) {    // find first x/y cordinate for part[num]. 
         if (gcode[num].partMoved[x].x != undefined) {
@@ -351,10 +343,9 @@ function checkArgs() {
     }
 }
 function parseNum(data, char, endChar) {  // parser strips alpha prefix and returns integer
-    let sort;
-    let pos = 0;
-    let len = char.length
-    let regx = new RegExp(`${char}`, "g")
+    let sort, pos = 0,
+        len = char.length,
+        regx = new RegExp(`${char}`, "g");
     obj = [];
     while ((sort = regx.exec(data)) !== null) {
         if (obj[pos] == undefined) obj.push({});
@@ -374,26 +365,26 @@ function parseNum(data, char, endChar) {  // parser strips alpha prefix and retu
 }
 function color(color, input, ...option) {   //  ascii color function for terminal colors
     if (input == undefined) input = '';
-    let c;
-    let op = ""
-    let bold = ';1m';
+    let c, op = "", bold = ';1m', vbuf= "";
     for (let x = 0; x < option.length; x++) {
         if (option[x] == 0) bold = 'm';       // bold
         if (option[x] == 1) op = '\x1b[5m';     // blink
         if (option[x] == 2) op = '\u001b[4m';   // underline
     }
-    if (color == 'black') c = 0;
-    if (color == 'red') c = 1;
-    if (color == 'green') c = 2;
-    if (color == 'yellow') c = 3;
-    if (color == 'blue') c = 4;
-    if (color == 'purple') c = 5;
-    if (color == 'cyan') c = 6;
-    if (color == 'white') c = 7;
+    switch (color) {
+        case 'black': c = 0; break;
+        case 'red': c = 1; break;
+        case 'green': c = 2; break;
+        case 'yellow': c = 3; break;
+        case 'blue': c = 4; break;
+        case 'purple': c = 5; break;
+        case 'cyan': c = 6; break;
+        case 'white': c = 7; break;
+    }
     if (input === true) return '\x1b[3' + c + bold;     // begin color without end
     if (input === false) return '\x1b[37;m';            // end color
-    let buf = op + '\x1b[3' + c + bold + input + '\x1b[37;m';
-    return buf;
+    vbuf = op + '\x1b[3' + c + bold + input + '\x1b[37;m';
+    return vbuf;
 }
 function fileWriteOver(data) {
     try {
