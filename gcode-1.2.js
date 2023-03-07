@@ -10,7 +10,7 @@ let
     partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
     partRetraction = 6,             // in-between part retraction length in mm
     partRetractionPrime = 0,        // deretraction amount to add in addition to retraction amount
-    partRetractionSpeed = 1500,     // retraction speed in mm/min
+    partRetractionSpeed = 30,       // retraction speed in mm/sec
     printerReheat = true,           // set hotend and bed first layer temps
     printerReheatWait = false;      // force wait for first layer temps to be reached
 //---------------------------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ function partCode(num, addX, addY, numX, numY) {
                     buf += "\nG1 Z3";
                     buf += "\nG90";
                     buf += "\nG92 E0";
-                    buf += "\nG1 E-" + partRetraction + " F" + partRetractionSpeed;
+                    buf += "\nG1 E-" + partRetraction + " F" + (partRetractionSpeed * 60);
                     buf += "\nM83";
                     if (sys.partVertical == true) {
                         buf += "\nG1 X" + String((Number(partStart.x) + Number(addX)).toFixed(3));
@@ -305,7 +305,7 @@ function partCode(num, addX, addY, numX, numY) {
                     buf += "\nM300 S1000 P200";
                     if (partRetraction != 0) {
                         partRetraction += partRetractionPrime;
-                        buf += "\nG1 E" + partRetraction + " F" + partRetractionSpeed;
+                        buf += "\nG1 E" + partRetraction + " F" + (partRetractionSpeed * 60);
                     }
                     //  console.log(buf)
                     partStartFound = true;
