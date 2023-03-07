@@ -304,8 +304,8 @@ function partCode(num, addX, addY, numX, numY) {
                     }
                     buf += "\nM300 S1000 P200";
                     if (partRetraction != 0) {
-                        partRetraction += partRetractionPrime;
-                        buf += "\nG1 E" + partRetraction + " F" + (partRetractionSpeed * 60);
+                        let prime = partRetraction + partRetractionPrime;
+                        buf += "\nG1 E" + prime + " F" + (partRetractionSpeed * 60);
                     }
                     //  console.log(buf)
                     partStartFound = true;
