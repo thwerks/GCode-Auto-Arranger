@@ -9,6 +9,7 @@ let
     partStartX = 1,     //set begenning point for part alignment X (probably just leave to 5mm)
     partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
     partRetraction = 6,             // in-between part retraction length in mm
+    partRetractionPrime = 0,        // deretraction amount to add in addition to retraction amount
     partRetractionSpeed = 1500,     // retraction speed in mm/min
     printerReheat = true,           // set hotend and bed first layer temps
     printerReheatWait = false;      // force wait for first layer temps to be reached
@@ -42,7 +43,7 @@ gcode[0].source = buf.toString().split("\n")  //  stage gcode in a line split st
 console.log("Analyzing part...");
 partAnalyze(0);       // gather data and parse  
 partSize(0);          // quantify data
-partMoveOrigin(0);      // move part to origin coordinates
+partMoveOrigin(0);    // move part to origin coordinates
 checkArgs();          // check arguments - check for additional horizontal or virtical part
 partDuplicate();      // create iterations of part
 time.end = new Date().getTime();
@@ -302,7 +303,10 @@ function partCode(num, addX, addY, numX, numY) {
                         buf += "\n" + gcode[0].tempExtruderWait;
                     }
                     buf += "\nM300 S1000 P200";
-                    buf += "\nG1 E12 F" + partRetractionSpeed;
+                    if (partRetraction != 0) {
+                        partRetraction += partRetractionPrime;
+                        buf += "\nG1 E" + partRetraction + " F" + partRetractionSpeed;
+                    }
                     //  console.log(buf)
                     partStartFound = true;
                     // console.log("setting jump location")
