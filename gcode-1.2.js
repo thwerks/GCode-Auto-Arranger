@@ -9,7 +9,9 @@ let
     partStartX = 1,     //set begenning point for part alignment X (probably just leave to 5mm)
     partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
     partRetraction = 6,             // in-between part retraction length in mm
-    partRetractionSpeed = 1500;     // retraction speed in mm/min
+    partRetractionSpeed = 1500,     // retraction speed in mm/min
+    printerReheat = true,           // set hotend and bed first layer temps
+    printerReheatWait = false;      // force wait for first layer temps to be reached
 //---------------------------------------------------------------------------------------------------
 const fs = require('fs')
 let
@@ -291,10 +293,14 @@ function partCode(num, addX, addY, numX, numY) {
                         buf += "\nG1 Y" + String((Number(partStart.y) + Number(addY)).toFixed(3));
                         buf += "\nG1 X" + String((Number(partStart.x) + Number(addX)).toFixed(3));
                     }
-                    buf += "\n" + gcode[0].tempBed;
-                    buf += "\n" + gcode[0].tempExtruder;
-                    buf += "\n" + gcode[0].tempBedWait;
-                    buf += "\n" + gcode[0].tempExtruderWait;
+                    if (printerReheat == true) {
+                        buf += "\n" + gcode[0].tempBed;
+                        buf += "\n" + gcode[0].tempExtruder;
+                    }
+                    if (printerReheatWait == true) {
+                        buf += "\n" + gcode[0].tempBedWait;
+                        buf += "\n" + gcode[0].tempExtruderWait;
+                    }
                     buf += "\nM300 S1000 P200";
                     buf += "\nG1 E12 F" + partRetractionSpeed;
                     //  console.log(buf)
@@ -365,7 +371,7 @@ function parseNum(data, char, endChar) {  // parser strips alpha prefix and retu
 }
 function color(color, input, ...option) {   //  ascii color function for terminal colors
     if (input == undefined) input = '';
-    let c, op = "", bold = ';1m', vbuf= "";
+    let c, op = "", bold = ';1m', vbuf = "";
     for (let x = 0; x < option.length; x++) {
         if (option[x] == 0) bold = 'm';       // bold
         if (option[x] == 1) op = '\x1b[5m';     // blink
