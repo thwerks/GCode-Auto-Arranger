@@ -38,7 +38,7 @@ The program analyzes your part and determines how many can fit on your bed and t
 
 # Execution:
 * All you need to do is download NodeJS for Windows or Linux.
-* It was written in NodeJS 14 and possibly might not work in NodeJS 10 but I'm not completely sure
+* It was written in NodeJS 19 and possibly might not work in NodeJS 10 but I'm not completely sure
 * **You need to edit the first sectio of variables with dimensions that match your printer**, its currently set for an Ender 3
 
 
