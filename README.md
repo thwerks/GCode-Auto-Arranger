@@ -15,7 +15,7 @@ The program analyzes your part and determines how many can fit on your bed and t
 * It determines the maximum amount of parts that will fit on your bed size (which you specify)
 * Part GCode is ripped out and modified, so you'r free to use any brim, skirt settings you want for an individual part
 * Modifies GCode to perform an Y/X move before Z moves when moving to print next part
-* Reheats and waits for bed/extruder start temps each time new part begins
+* Reheats and waits for bed/extruder start temps each time new part begins (if you choose)
 * It arranges the print order, starting in front left of the bed, moving to the right and back to the next row
 * It uses carriage dimensions (which you specify) to know how much space to put between each part
 * It use X gantry height (which you specify) to switch to a different strategy to avoid X gantry collisions
@@ -28,7 +28,7 @@ The program analyzes your part and determines how many can fit on your bed and t
 * Enable "Label Objects" in PrusaSlicer in Print Settings / Output Options
 * Use PrusaSlicer and put a single part on the bed and export GCode using control+g
 * Run the app in the command line as such (node /path/to/gcode.js /path/to/your/part.gcode) or Windows (node c:\gcode.js c:\path\to\your\part.gcode)
-* A new file is created with the same name and inside same directory, appended with "new"
+* A new file is created with the same name and inside same directory, appended with "full bed"
 * Use PrusaSlicer GCode viewer to confirm results are satisfactory
 
 ### Additional Part Feature
