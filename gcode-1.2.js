@@ -112,7 +112,7 @@ function partSize(num, orientation) {
         part[num].sizeX = part[num].maxX - part[num].minX;
         part[num].sizeY = part[num].maxY - part[num].minY;
         console.log('Part is: ' + '(x)' + part[num].sizeX.toFixed(2) + 'mm  -  (y)' + part[num].sizeY.toFixed(2) + "mm  -  (z)" + part[num].maxZ + "mm");
-        if (part[num].maxZ <= clearanceZ) {                                                          // very low profile part
+        if (part[num].maxZ <= clearanceZ) {                                                         // very low profile part
             console.log(color("green", "Part is lower than carriage"));
             part[num].flat = true;
             part[num].partsMaxX = Math.floor(bedX / part[num].sizeX);
@@ -129,7 +129,7 @@ function partSize(num, orientation) {
             else if (part[num].maxZ >= gantryX && (part[num].sizeY * 2) + clearanceY <= bedY) part[num].triSide = true;
             console.log(color("yellow", "Arranging parts into triangle mode"));
         } else {
-            if (part[num].maxZ >= gantryX) {                                                                   // zigzag arrangement 
+            if (part[num].maxZ >= gantryX) {                                                        // zigzag arrangement 
                 console.log(color("yellow", "Part is taller than gantry ") + "- switching to ZigZag placement");
                 part[num].zigZag = true;
                 part[num].partsMaxY = 0;
@@ -174,7 +174,7 @@ function partDuplicate() {
     if (part[0].zigZag == false) {
         if (part[0].triTop == false && part[0].triSide == false) {
             if (part[0].flat == true) {
-                for (let y = 0; y < part[0].partsMaxY; y++) {        // low profile part arrangment
+                for (let y = 0; y < part[0].partsMaxY; y++) {       // low profile part arrangment
                     for (let x = 0; x < part[0].partsMaxX; x++) {
                         console.log("Creating part at Y(row) " + part[0].posY.toFixed(3) + "  X " + part[0].posX.toFixed(3));
                         partCode(0, part[0].posX, part[0].posY, x, y);
@@ -183,7 +183,7 @@ function partDuplicate() {
                     part[0].posX = 0;
                     part[0].posY += part[0].sizeY + clearanceS;
                 }
-                if (sys.partVertical == true) {                    // low profile vertical part arrangement
+                if (sys.partVertical == true) {                     // low profile vertical part arrangement
                     part[1].posX = bedX - part[1].sizeX - partStartX;
                     part[1].posY = partStartY;
                     for (let y = 0; y < part[1].partsMaxY; y++) {
@@ -192,7 +192,7 @@ function partDuplicate() {
                         part[1].posY += part[1].sizeY;
                     }
                 }
-                if (sys.partHorizontal == true) {                    // low profile horizontal part arrangement
+                if (sys.partHorizontal == true) {                   // low profile horizontal part arrangement
                     part[1].posY = bedY - part[1].sizeY - partStartY;
                     part[1].posX = partStartX;
                     for (let y = 0; y < part[1].partsMaxX; y++) {
@@ -201,7 +201,7 @@ function partDuplicate() {
                         part[1].posX += part[1].sizeX;
                     }
                 }
-            } else {                                            // regular arrangement
+            } else {                                                // regular arrangement
                 for (let y = 0; y < part[0].partsMaxY; y++) {
                     for (let x = 0; x < part[0].partsMaxX; x++) {
                         console.log("Creating part at Y(row) " + part[0].posY.toFixed(3) + "  X " + part[0].posX.toFixed(3));
@@ -211,7 +211,7 @@ function partDuplicate() {
                     part[0].posX = 0;
                     part[0].posY += part[0].sizeY + clearanceY;
                 }
-                if (sys.partVertical == true) {                    // vertical part arrangement
+                if (sys.partVertical == true) {                     // vertical part arrangement
                     part[1].posX = bedX - part[1].sizeX - partStartX;
                     part[1].posY = partStartY;
                     for (let y = 0; y < part[1].partsMaxY; y++) {
@@ -220,7 +220,7 @@ function partDuplicate() {
                         part[1].posY += part[1].sizeY + clearanceY;
                     }
                 }
-                if (sys.partHorizontal == true) {                    // horizontal part arrangement
+                if (sys.partHorizontal == true) {                   // horizontal part arrangement
                     part[1].posY = bedY - part[1].sizeY - partStartY;
                     part[1].posX = partStartX;
                     for (let y = 0; y < part[1].partsMaxX; y++) {
@@ -230,7 +230,7 @@ function partDuplicate() {
                     }
                 }
             }
-        } else {                                              // triangle arrangement
+        } else {                                                    // triangle arrangement
             if (part[0].triTop == true) {
                 console.log("Creating part in bottom left");
                 partCode(0, 0, 0, 0);
@@ -247,7 +247,7 @@ function partDuplicate() {
                 partCode(0, 0, bedY - part[0].sizeY - (partStartY * 2));
             }
         }
-    } else {                                                // tall zig zag parts
+    } else {                                                        // tall zig zag parts
         for (let y = 0; y < part[0].partsMaxY; y++) {
             console.log("Creating part at Y(row) " + part[0].posY.toFixed(3));
             if (positionLeft == true) {
@@ -259,7 +259,6 @@ function partDuplicate() {
                 part[0].posY += (part[0].sizeY);
                 positionLeft = true;
             }
-
         }
     }
     gcode[0].end.forEach((data) => buf += data + "\n");
@@ -267,8 +266,7 @@ function partDuplicate() {
 }
 function partCode(num, addX, addY, numX, numY) {
     let partStart = {}, partStartFound = false;
-    //console.log(buf)
-    for (let x = 0; x < gcode[num].partMoved.length; x++) {    // find first x/y cordinate for part[num]. 
+    for (let x = 0; x < gcode[num].partMoved.length; x++) {         // find first x/y cordinate for part[num]. 
         if (gcode[num].partMoved[x].x != undefined) {
             partStart.x = gcode[num].partMoved[x].x;
             if (gcode[num].partMoved[x].y != undefined) partStart.y = gcode[num].partMoved[x].y;
@@ -307,9 +305,7 @@ function partCode(num, addX, addY, numX, numY) {
                         let retract = partRetraction + partRetractionPrime;
                         buf += "\nG1 E" + retract + " F" + (partRetractionSpeed * 60);
                     }
-                    //  console.log(buf)
                     partStartFound = true;
-                    // console.log("setting jump location")
                 }
             }
         }
@@ -377,7 +373,7 @@ function color(color, input, ...option) {   //  ascii color function for termina
     if (input == undefined) input = '';
     let c, op = "", bold = ';1m', vbuf = "";
     for (let x = 0; x < option.length; x++) {
-        if (option[x] == 0) bold = 'm';       // bold
+        if (option[x] == 0) bold = 'm';         // bold
         if (option[x] == 1) op = '\x1b[5m';     // blink
         if (option[x] == 2) op = '\u001b[4m';   // underline
     }
