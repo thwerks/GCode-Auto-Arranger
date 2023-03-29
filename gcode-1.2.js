@@ -10,7 +10,7 @@ let
     partStartY = 1,     //set begenning point for part alignment Y (probably just leave to 5mm)
     partRetraction = 6,             // in-between part retraction length in mm
     partRetractionPrime = 0,        // deretraction amount to add in addition to retraction amount
-    partRetractionSpeed = 30,       // retraction speed in mm/sec
+    partRetractionSpeed = 30,       // retraction/deretraction speed in mm/sec
     printerReheat = true,           // set hotend and bed first layer temps
     printerReheatWait = false;      // force wait for first layer temps to be reached
 //---------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ time.diff = time.end - time.start;
 time.seconds = (time.diff / 1000 % 60);
 console.log(color("blue", "Done!") + " in " + color("blue", time.seconds) + " seconds.");
 function partAnalyze(num) {
-    for (let x = 0; x < gcode[num].source.length; x++) {  // interate every line of gcode data
+    for (let x = 0; x < gcode[num].source.length; x++) {  // enumerate every line of gcode data
         if (line[num].skirtEnd == false) {  // find end of the skirt - look for various end conditions
             if (gcode[num].source[x].startsWith('; printing object') == true
                 || gcode[num].source[x] == ';TYPE:Perimeter'
@@ -63,11 +63,11 @@ function partAnalyze(num) {
             || gcode[num].source[x] == ';TYPE:Skirt') {
             line[num].skirtStart = x;
         }
-        if (line[num].skirtEnd == false && x > line[num].skirtStart + 2) {    // use skirt to find part length and width
-            buf = parseNum(gcode[num].source[x], "X", ' ');   // find part width
+        if (line[num].skirtEnd == false && x > line[num].skirtStart + 2) {      // use skirt to find part length and width
+            buf = parseNum(gcode[num].source[x], "X", ' ');                     // find part width
             if (buf != undefined && buf > part[num].maxX) part[num].maxX = buf;
             if (buf != undefined && buf < part[num].minX) part[num].minX = buf;
-            buf = parseNum(gcode[num].source[x], "Y", ' ');   // find part length
+            buf = parseNum(gcode[num].source[x], "Y", ' ');                     // find part length
             if (buf != undefined && buf > part[num].maxY) part[num].maxY = buf;
             if (buf != undefined && buf < part[num].minY) part[num].minY = buf;
         }
@@ -84,7 +84,7 @@ function partAnalyze(num) {
         if (gcode[num].source[x].startsWith("G21") == true) line[num].partStart = x;            // find part start line "G21"
         if (line[num].partStart == undefined) (gcode[num].start).push(gcode[num].source[x]);    // copy start gcode to mem
         if (line[num].partStart != undefined && line[num].partEnd == undefined) {
-            buf = parseNum(gcode[num].source[x], "Z", ' ');               // parse line if Z move (for purpose of finding z max height)
+            buf = parseNum(gcode[num].source[x], "Z", ' ');                         // parse line if Z move (for purpose of finding z max height)
             if (buf != undefined && buf > part[num].maxZ) part[num].maxZ = buf;                 // find max Z in part gcode
             (gcode[num].part).push(gcode[num].source[x]);                                       // copy part gcode to mem
             line[num].partTotal++;
